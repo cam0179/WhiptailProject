@@ -9,3 +9,8 @@ The code in the file **WhiptailCorePipeline.R** is the pipeline for differential
     - **PHENO_DATA.txt**
 
 This pipeline could also be used to analyze differences in transcript read counts using the file **transcript_count_matrix.csv**.
+
+
+## Other files:
+**DGETesselatusTissues2022.xlsx** contains metadata for where and how each sample was collected. Our PHENO_DATA file was derived from here.
+**DGESeq_results_county.csv** is the output results from the differential expression analysis from the DESeq2 model and contains all genes in the dataset ordered from most to least significant according to their adjusted p-value. 
