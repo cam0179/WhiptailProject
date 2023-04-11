@@ -1,0 +1,16 @@
+sample	county	capture
+Am_03	Culberson	Pitfall
+Am_27	Culberson	Pitfall
+Am_06	Culberson	Pitfall
+Am_09	Culberson	Pitfall
+Am_12	Culberson	Pitfall
+Am_15	Culberson	Pitfall
+Am_16	SantaFe	Noose
+Am_17	SantaFe	Noose
+Am_18	SantaFe	Noose
+Am_19	SantaFe	Noose
+Am_20	SantaFe	Noose
+Am_21	Brewster	Noose
+Am_22	Brewster	Noose
+Am_23	Brewster	Noose
+Am_24	Brewster	Noose
