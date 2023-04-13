@@ -19,7 +19,7 @@ library(DESeq2)
 
 ## Use the Session menu to set working directory to the directory that contains your source files and R scripts
 #save your working directory here
-setwd("C:/Users/allys/Box/Auburn/FunctionalGenomics/RNAseqPractice/WhiptailProject")
+setwd("C:/Users/allys/Box/Auburn/FunctionalGenomics/RNAseqPractice/DESeq2_WhiptailProject")
 
 ##########   1.3 Input data   ##############
 
@@ -44,10 +44,9 @@ all(rownames(coldata) %in% colnames(countdata))
 countdata <- countdata[, rownames(coldata)]
 all(rownames(coldata) == colnames(countdata))
 
-
 ## Create the DESEQ dataset and define the statistical model (page 6 of the manual)
 #   Here we want to evaluate differential expression by county samples were collected in
-dds <- DESeqDataSetFromMatrix(countData = countdata, colData=coldata,  design = ~county)
+dds <- DESeqDataSetFromMatrix(countData = countdata, colData=coldata,  design =~ county)
 #look at it
 dds
 
@@ -63,11 +62,10 @@ dds
 ###### Note you need to change condition to whatever treatment you built your model with above
 
 
-#Lets start with Culberson vs. Brewster
 dds$condition <- factor(dds$county, levels=c("Culberson","SantaFe","Brewster"))
 
 ################     1.4 Differential expression analysis
-dds <- DESeq(dds)
+dds <- DESeq(dds, test = "LRT", reduced =~ 1)
 res <- results(dds)
 res
 
@@ -149,6 +147,91 @@ pheatmap(sampleDistMatrix,
          col=colors)
 
 
-# 2.2.3 Principal component plot of the samples
+# 2.2.3 Principal component plot of all the samples
 plotPCA(rld, intgroup=c("county"))
+
+
+#Let's do some pairwise analysis
+culberson_vs_brewster_counts <- subset(countdata[,c(1:6,12:15)])
+culberson_vs_brewster_coldata <- subset(coldata[c(1:6,12:15),])
+brewster_vs_santafe_counts <- subset(countdata[,c(7:11,12:15)])
+brewster_vs_santafe_coldata <- subset(coldata[c(7:11,12:15),])
+santafe_vs_culberson_counts <- subset(countdata[,c(1:6,7:11)])
+santafe_vs_culberson_coldata <- subset(coldata[c(1:6,7:11),])
+
+#Culberson vs. Brewster populations
+dds <- DESeqDataSetFromMatrix(countData = culberson_vs_brewster_counts, colData=culberson_vs_brewster_coldata,  design =~ county)
+dds
+
+dds <- dds[ rowSums(counts(dds)) > 10, ]
+dds
+
+dds$condition <- factor(dds$county, levels=c("Culberson","Brewster"))
+
+dds <- DESeq(dds)
+res <- results(dds)
+res
+
+# We can order our results table by the smallest adjusted p value:
+resOrdered <- res[order(res$padj),]
+resOrdered
+# We can summarize some basic tallies using the summary function the default is p<0.1.
+summary(res)
+#How many adjusted p-values were less than 0.1?
+sum(res$padj < 0.1, na.rm=TRUE)
+#If the adjusted p value will be a value other than 0.1, alpha should be set to that value:
+res05 <- results(dds, alpha=0.05)
+summary(res05)
+sum(res05$padj < 0.05, na.rm=TRUE)
+
+#Brewster vs. Santa Fe populations
+dds <- DESeqDataSetFromMatrix(countData = brewster_vs_santafe_counts, colData=brewster_vs_santafe_coldata,  design =~ county)
+dds
+
+dds <- dds[ rowSums(counts(dds)) > 10, ]
+dds
+
+dds$condition <- factor(dds$county, levels=c("Brewster","SantaFe"))
+
+dds <- DESeq(dds)
+res <- results(dds)
+res
+
+# We can order our results table by the smallest adjusted p value:
+resOrdered <- res[order(res$padj),]
+resOrdered
+# We can summarize some basic tallies using the summary function the default is p<0.1.
+summary(res)
+#How many adjusted p-values were less than 0.1?
+sum(res$padj < 0.1, na.rm=TRUE)
+#If the adjusted p value will be a value other than 0.1, alpha should be set to that value:
+res05 <- results(dds, alpha=0.05)
+summary(res05)
+sum(res05$padj < 0.05, na.rm=TRUE)
+
+#Santa Fe vs. Culberson populations
+dds <- DESeqDataSetFromMatrix(countData = santafe_vs_culberson_counts, colData=santafe_vs_culberson_coldata,  design =~ county)
+dds
+
+dds <- dds[ rowSums(counts(dds)) > 10, ]
+dds
+
+dds$condition <- factor(dds$county, levels=c("SantaFe","Culberson"))
+
+dds <- DESeq(dds)
+res <- results(dds)
+res
+
+# We can order our results table by the smallest adjusted p value:
+resOrdered <- res[order(res$padj),]
+resOrdered
+# We can summarize some basic tallies using the summary function the default is p<0.1.
+summary(res)
+#How many adjusted p-values were less than 0.1?
+sum(res$padj < 0.1, na.rm=TRUE)
+#If the adjusted p value will be a value other than 0.1, alpha should be set to that value:
+res05 <- results(dds, alpha=0.05)
+summary(res05)
+sum(res05$padj < 0.05, na.rm=TRUE)
+
 
