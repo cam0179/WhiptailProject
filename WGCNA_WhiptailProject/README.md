@@ -1,6 +1,6 @@
 # Weighted Gene Co-expression Network Analysis (WGCNA) of the Checkered Whiptail Lizard, _Aspidoselis tesselata_
 
-The code written in **WGNCA.R** was developed by Ally Swank to assess co-expression of genes across three different populations of _A. tesselata_ using two different capture methods. This work was done in collaboration with Dr. Randy Klabacka by Akila Abesinghe, Ally Swank, Camille Miceli, Gabriel Amorim de Albuquerque Silva, and Melissa Gathman.
+The code written in **WGNCA.R** was developed by Ally Swank to assess co-expression of genes across three different populations of _A. tesselata_ using two different capture methods. This work was done in collaboration with Dr. Randy Klabacka by Akila Abesinghe, Ally Swank, Gabriel Amorim de Albuquerque Silva, and Melissa Gathman.
 
 ## Directories, input, and output files:
 1. **raw-data**: directory containing all of the input files to be run in the WGCNA.R script. 
