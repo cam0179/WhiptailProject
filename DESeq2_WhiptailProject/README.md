@@ -1,6 +1,6 @@
 # DESeq2 Analysis of the Checkered Whiptail Lizard, _Aspidoselis tesselata_
 
-The code in the file **WhiptailCorePipeline.R** is the pipeline for differential expression analysis using RNA-seq data collected from three different populations of _A. tesselata_. This pipeline was created in collaboration with Dr. Randy Klabacka by Akila Abesinghe, Ally Swank, Camille Miceli, Gabriel Amorim de Albuquerque Silva, and Melissa Gathman. 
+The code in the file **WhiptailCorePipeline.R** is the pipeline for differential expression analysis using RNA-seq data collected from three different populations of _A. tesselata_. This pipeline was created in collaboration with Dr. Randy Klabacka by Akila Abesinghe, Ally Swank, Gabriel Amorim de Albuquerque Silva, and Melissa Gathman. 
 
 ## Input files:
 1. Gene count matrix that would be a comma delimited output from the bionformatic processing of raw reads. Our gene count matrix was created using StringTie. 
