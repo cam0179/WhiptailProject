@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=Star_idx
 #SBATCH --output=logs/Star-idx_%A.log
-#SBATCH --cpus-per-task=20
+#SBATCH --ntasks=10
 #SBATCH --mem=100gb
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
@@ -22,9 +22,9 @@ outIndex=${workDir}/Reference/P_raffonei/Star_idx
 
 mkdir -p ${workDir}/Reference/P_raffonei/Star_idx
 
-STAR --runThreadN 20 \
+STAR --runThreadN 10 \
 --runMode genomeGenerate \
 --genomeDir $outIndex \
---genomeFastaFiles $baseName.fna \
---sjdbGTFfile $baseName.gtf \
+--genomeFastaFiles ${baseName}.fna \
+--sjdbGTFfile ${baseName}.gtf \
 --sjdbOverhang -1
