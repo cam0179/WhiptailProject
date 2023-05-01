@@ -1,0 +1,86 @@
+#set working directory 
+setwd("/Users/camillemiceli/Whiptail")
+
+#load EdgeR
+library(edgeR)
+
+#load data and remove first col
+data <- read.csv("gene_count_matrix.csv",colClasses=c("NULL",NA,NA,NA))
+
+datapheno <- c("Culberson","Culberson","Culberson","Culberson","SantaFe","SantaFe","SantaFe","SantaFe","Brewster","Brewster","Brewster","Culberson")
+
+
+library(edgeR)
+d <- DGEList(counts=data,group=factor(datapheno))
+
+#FILTER DATA
+dim(d)
+d.full <- d # keep the old one in case we mess up
+head(d$counts)
+head(cpm(d))
+
+apply(d$counts, 2, sum) # total gene counts per sample
+keep <- rowSums(cpm(d)>100) >= 2
+d <- d[keep,]
+dim(d)
+
+d$samples$lib.size <- colSums(d$counts)
+d$samples
+
+
+#NORMALIZNG
+d <- calcNormFactors(d)
+d
+
+#PLOTTING
+plotMDS(d, method="bcv", col=as.numeric(d$samples$group))
+legend("bottomleft", as.character(unique(d$samples$group)), col=1:3, pch=20)
+
+#ESTIMATING DISPERSION
+d1 <- estimateCommonDisp(d, verbose=T)
+names(d1)
+
+d1 <- estimateTagwiseDisp(d1)
+names(d1)
+
+plotBCV(d1) #plots tagwise biological coefficient of variation (square root of dispersions) against log2-CPM.
+
+
+#GLM ESTIMATING OF DISPERSION
+design.mat <- model.matrix(~ 0 + d$samples$group)
+colnames(design.mat) <- levels(d$samples$group)
+d2 <- estimateGLMCommonDisp(d,design.mat)
+d2 <- estimateGLMTrendedDisp(d2,design.mat, method="power")
+# You can change method to "auto", "bin.spline", "power", "spline", "bin.loess".
+# The default is "auto" which chooses "bin.spline" when > 200 tags and "power" otherwise.
+d2 <- estimateGLMTagwiseDisp(d2,design.mat)
+plotBCV(d2)
+
+
+#DIFFERENTIAL EXPRESSION
+et12 <- exactTest(d1, pair=c(1,2)) # compare groups 1 and 2
+et13 <- exactTest(d1, pair=c(1,3)) # compare groups 1 and 3
+et23 <- exactTest(d1, pair=c(2,3)) # compare groups 2 and 3
+topTags(et12, n=10)
+
+de1 <- decideTestsDGE(et12, adjust.method="BH", p.value=0.05)
+summary(de1)
+
+# differentially expressed tags from the naive method in d1
+de1tags12 <- rownames(d1)[as.logical(de1)] 
+plotSmear(et12, de.tags=de1tags12)
+abline(h = c(-2, 2), col = "blue")
+
+#GLM TESTING FOR DIFFERENTAIL EXPRESSION
+design.mat
+fit <- glmFit(d2, design.mat)
+
+lrt12 <- glmLRT(fit, contrast=c(1,-1,0))
+lrt13 <- glmLRT(fit, contrast=c(1,0,-1))
+lrt23 <- glmLRT(fit, contrast=c(0,1,-1))
+topTags(lrt12, n=10)
+
+de2 <- decideTestsDGE(lrt12, adjust.method="BH", p.value = 0.05)
+de2tags12 <- rownames(d2)[as.logical(de2)]
+plotSmear(lrt12, de.tags=de2tags12)
+abline(h = c(-2, 2), col = "blue")
